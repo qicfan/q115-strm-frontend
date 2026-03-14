@@ -16,6 +16,8 @@ import { useAuthStore } from '@/stores/auth'
 // 配置axios
 axios.defaults.timeout = 10000
 axios.defaults.headers.common['Content-Type'] = 'application/json'
+// 允许携带 Cookie（支持飞牛 App 内置浏览器）
+axios.defaults.withCredentials = true
 
 // 请求拦截器
 axios.interceptors.request.use(

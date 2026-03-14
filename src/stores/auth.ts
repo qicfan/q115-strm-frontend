@@ -18,9 +18,22 @@ export const useAuthStore = defineStore('auth', () => {
   // 计算属性
   const isAuthenticated = computed(() => !!token.value)
 
+  // 从Cookie读取token（支持飞牛App内置浏览器）
+  const getCookieToken = (): string | null => {
+    const cookies = document.cookie.split(';')
+    for (let cookie of cookies) {
+      const [name, value] = cookie.trim().split('=')
+      if (name === 'auth_token') {
+        return value
+      }
+    }
+    return null
+  }
+
   // 从localStorage恢复登录状态
   const initAuth = () => {
-    const savedToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
+    // 优先从localStorage/sessionStorage读取，其次从Cookie读取
+    const savedToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token') || getCookieToken()
     const savedUser = localStorage.getItem('auth_user') || sessionStorage.getItem('auth_user')
 
     if (savedToken && savedUser) {
