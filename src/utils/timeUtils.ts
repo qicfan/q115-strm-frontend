@@ -1,23 +1,30 @@
 // 时间格式化工具函数
 
 /**
+ * 内部辅助函数：格式化日期为 YYYY-MM-DD HH:MM:SS 格式
+ * 使用自定义格式化避免依赖浏览器 toLocaleString 实现的差异
+ * @param date Date 对象
+ * @returns 格式化后的日期时间字符串
+ */
+const formatDateString = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+/**
  * 格式化时间戳为日期时间字符串 (YYYY-MM-DD HH:MM:SS)
  * @param timestamp 时间戳(秒)
  * @returns 格式化后的日期时间字符串
  */
 export const formatTimestamp = (timestamp: number): string => {
+  if (!timestamp) return '-'
   const date = new Date(timestamp * 1000)
-  return date
-    .toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    })
-    .replace(/\//g, '-')
+  return formatDateString(date)
 }
 
 /**
@@ -28,15 +35,7 @@ export const formatTimestamp = (timestamp: number): string => {
 export const formatDateTime = (timestamp: number): string => {
   if (!timestamp) return '-'
   const date = new Date(timestamp * 1000)
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
+  return formatDateString(date)
 }
 
 /**
@@ -47,15 +46,7 @@ export const formatDateTime = (timestamp: number): string => {
 export const formatTime = (timestamp: number): string => {
   if (!timestamp) return '-'
   const date = new Date(timestamp * 1000)
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
+  return formatDateString(date)
 }
 
 /**
@@ -129,7 +120,11 @@ export const formatExpireTime = (expireTime: string): string => {
   if (diffDays === 0) return '今天到期'
   if (diffDays <= 30) return `${diffDays}天后到期`
 
-  return date.toLocaleDateString('zh-CN')
+  // 使用自定义格式化，避免 toLocaleDateString 的浏览器兼容性问题
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 /**

@@ -967,7 +967,18 @@ const formatLastSyncTime = (timestamp: number | null | undefined) => {
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
 
-    if (diffMs < 0) return date.toLocaleString('zh-CN')
+    // 使用自定义格式化函数，避免 toLocaleString 的浏览器兼容性问题
+    const formatDateString = (d: Date): string => {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      const hours = String(d.getHours()).padStart(2, '0')
+      const minutes = String(d.getMinutes()).padStart(2, '0')
+      const seconds = String(d.getSeconds()).padStart(2, '0')
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    }
+
+    if (diffMs < 0) return formatDateString(date)
 
     const diffSecs = Math.floor(diffMs / 1000)
     const diffMins = Math.floor(diffSecs / 60)
@@ -979,7 +990,7 @@ const formatLastSyncTime = (timestamp: number | null | undefined) => {
     if (diffHours < 24) return `${diffHours}小时前`
     if (diffDays < 30) return `${diffDays}天前`
 
-    return date.toLocaleString('zh-CN')
+    return formatDateString(date)
   } catch {
     return String(timestamp)
   }
