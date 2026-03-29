@@ -30,6 +30,17 @@
           </div>
         </div>
 
+        <!-- 主题切换 -->
+        <div class="theme-switch">
+          <el-icon><Sunny /></el-icon>
+          <el-switch
+            :model-value="currentMode === 'dark'"
+            size="small"
+            @change="(val: boolean) => setMode(val ? 'dark' : 'light')"
+          />
+          <el-icon><Moon /></el-icon>
+        </div>
+
         <el-menu
           :default-active="$route.path"
           :default-openeds="getDefaultOpeneds()"
@@ -168,11 +179,12 @@
 </template>
 
 <script setup lang="ts">
-import { User, Menu, Loading, QuestionFilled } from '@element-plus/icons-vue'
+import { User, Menu, Loading, QuestionFilled, Sunny, Moon } from '@element-plus/icons-vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useBackupStore } from '@/stores/backup'
+import { useTheme, type ThemeMode } from '@/composables/useTheme'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { isMobile as checkIsMobile, onDeviceTypeChange } from '@/utils/deviceUtils'
 import { formatDuration } from '@/utils/timeUtils'
@@ -181,6 +193,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const backupStore = useBackupStore()
+const { currentMode, setMode } = useTheme()
 const isMobile = ref(false)
 const isMenuOpen = ref(false)
 
@@ -609,6 +622,94 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+/* 主题切换 */
+.theme-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 15px;
+  font-size: 16px;
+  color: #606266;
+}
+
+/* 暗黑模式样式覆盖 */
+html.dark {
+  /* 侧边栏 */
+  .el-aside {
+    background-color: #1d1e1f !important;
+  }
+
+  .el-menu-vertical {
+    background-color: #1d1e1f !important;
+  }
+
+  /* 主内容区 */
+  .main-content {
+    background-color: #141414 !important;
+    color: #e5eaf3;
+  }
+
+  /* 用户信息 */
+  .user-info {
+    color: #e5eaf3;
+  }
+
+  .username {
+    color: #e5eaf3;
+  }
+
+  .theme-switch {
+    color: #cfd3dc;
+  }
+
+  /* 移动端顶部栏 */
+  .mobile-header {
+    background-color: #1d1e1f !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .page-title {
+    color: #e5eaf3 !important;
+  }
+
+  /* 滚动条 */
+  ::-webkit-scrollbar-track {
+    background: #262626;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #4c4d4f;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5c5d5f;
+  }
+
+  /* 备份进度 */
+  .progress-time {
+    background-color: #262626 !important;
+  }
+
+  .progress-step {
+    color: #a3a6ad;
+  }
+
+  .progress-tables {
+    color: #636569;
+  }
+
+  /* 退出按钮 */
+  .logout-btn {
+    color: #636569 !important;
+  }
+
+  /* 菜单切换按钮 */
+  .menu-toggle {
+    color: #cfd3dc !important;
+  }
 }
 
 /* 滚动条样式优化 */
