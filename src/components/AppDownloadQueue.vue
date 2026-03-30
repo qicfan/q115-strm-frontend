@@ -51,12 +51,12 @@
       v-loading="loading"
       empty-text="暂无下载任务"
       :row-class-name="tableRowClassName"
-      height="calc(100vh - 500px)"
-      class="hidden-md-and-up"
+      height="calc(100vh - 350px)"
     >
-      <el-table-column type="expand" width="30">
+      <el-table-column type="expand" class-name="hidden-md-and-up">
         <template #default="scope">
           <el-descriptions class="margin-top" :column="2" border size="small">
+            <el-descriptions-item label="ID">{{ scope.row.id }}</el-descriptions-item>
             <el-descriptions-item label="来源">{{ scope.row.source }}</el-descriptions-item>
             <el-descriptions-item label="类型">
               <el-tag :type="getSourceTypeTagType(scope.row.source_type)">
@@ -64,44 +64,37 @@
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="状态">
-              <el-tag :type="getStatusTagType(scope.row.status)">
+              <div v-if="scope.row.error">
+                <el-tag :type="getStatusTagType(scope.row.status)">
+                  {{ getStatusText(scope.row.status) }}
+                </el-tag>
+                <span style="margin-left: 4px; color: #f56c6c; font-size: 12px">{{ scope.row.error }}</span>
+              </div>
+              <el-tag v-else :type="getStatusTagType(scope.row.status)">
                 {{ getStatusText(scope.row.status) }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="文件大小">
               {{ formatFileSize(scope.row.size) }}
             </el-descriptions-item>
+            <el-descriptions-item label="文件名">{{ scope.row.file_name }}</el-descriptions-item>
             <el-descriptions-item label="开始时间">
               {{ scope.row.start_time ? formatDateTime(scope.row.start_time) : '-' }}
             </el-descriptions-item>
             <el-descriptions-item label="完成时间">
               {{ scope.row.end_time ? formatDateTime(scope.row.end_time) : '-' }}
             </el-descriptions-item>
+            <el-descriptions-item label="下载链接" :span="2">
+              <span>{{ scope.row.remote_file_id }}</span> => <span>{{ scope.row.local_full_path }}</span>
+            </el-descriptions-item>
             <el-descriptions-item label="失败原因" v-if="scope.row.error" :span="2">
-              {{ scope.row.error ? scope.row.error : '-' }}
+              {{ scope.row.error }}
             </el-descriptions-item>
           </el-descriptions>
         </template>
       </el-table-column>
-      <el-table-column prop="speed" label="下载链接">
-        <template #default="scope">
-          <span>{{ scope.row.remote_file_id }}</span> <br />
-          => <br />
-          <span>{{ scope.row.local_full_path }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-table
-      :data="queueData"
-      style="width: 100%"
-      v-loading="loading"
-      empty-text="暂无下载任务"
-      :row-class-name="tableRowClassName"
-      height="calc(100vh - 300px)"
-      class="hidden-md-and-down"
-    >
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="source" label="下载来源" width="80" />
+      <el-table-column prop="id" label="ID" width="80" class-name="hidden-sm-and-down" />
+      <el-table-column prop="source" label="下载来源" width="80" class-name="hidden-sm-and-down" />
       <el-table-column prop="status" label="状态" width="120">
         <template #default="scope">
           <div v-if="scope.row.error">
@@ -121,30 +114,26 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="size" label="文件大小" width="120">
-        <template #default="scope">
-          {{ formatFileSize(scope.row.size) }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="file_name" label="文件名" width="280">
+      <el-table-column prop="size" label="文件大小" width="120" class-name="hidden-sm-and-down" />
+      <el-table-column prop="file_name" label="文件名" width="280" class-name="hidden-xs">
         <template #default="scope">
           <span class="filename">{{ scope.row.file_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="start_time" label="时间" width="260">
+      <el-table-column prop="start_time" label="时间" width="260" class-name="hidden-sm-and-down">
         <template #default="scope">
           开始时间：{{ scope.row.start_time ? formatDateTime(scope.row.start_time) : '-' }}<br />
           结束时间：{{ scope.row.end_time ? formatDateTime(scope.row.end_time) : '-' }}
         </template>
       </el-table-column>
-      <el-table-column prop="source_type" label="类型" width="80">
+      <el-table-column prop="source_type" label="类型" width="80" class-name="hidden-sm-and-down">
         <template #default="scope">
           <el-tag :type="getSourceTypeTagType(scope.row.source_type)">
             {{ getSourceTypeName(scope.row.source_type) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="speed" label="下载链接">
+      <el-table-column prop="speed" label="下载链接" class-name="hidden-sm-and-down">
         <template #default="scope">
           <span>{{ scope.row.remote_file_id }}</span> <br />
           => <br />
