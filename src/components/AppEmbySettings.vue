@@ -191,6 +191,57 @@
           </el-form-item>
         </el-card>
 
+        <el-card class="settings-card library-poster-card" shadow="hover">
+          <template #header>
+            <div class="card-header-wrapper">
+              <div class="card-header-icon features-icon">
+                <el-icon :size="24"><PictureFilled /></el-icon>
+              </div>
+              <div class="card-header-content">
+                <h3 class="card-title">媒体库封面生成</h3>
+                <p class="card-subtitle">自动为媒体库生成统一风格的网格封面</p>
+              </div>
+            </div>
+          </template>
+
+          <el-form-item label="启用封面生成" prop="enable_library_poster">
+            <div class="switch-wrapper">
+              <el-switch
+                v-model="embyData.enable_library_poster"
+                :active-value="1"
+                :inactive-value="0"
+                @change="onPosterEnabledChange"
+              />
+              <span class="switch-label" :class="{ 'is-active': embyData.enable_library_poster === 1 }">
+                {{ embyData.enable_library_poster === 1 ? '已启用' : '已禁用' }}
+              </span>
+            </div>
+            <div class="form-help" v-if="embyData.enable_library_poster === 1">
+              <el-icon><InfoFilled /></el-icon>
+              <span>开启后，将自动为媒体库生成网格拼图风格封面，使用每个媒体库中最近添加的媒体项海报</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="生成频率" prop="library_poster_cron" v-if="embyData.enable_library_poster === 1">
+            <el-input
+              v-model="embyData.library_poster_cron"
+              placeholder="Cron表达式，如：0 3 * * *"
+              style="width: 200px"
+            />
+            <div class="form-help">
+              <el-icon><InfoFilled /></el-icon>
+              <span>使用Cron表达式设置封面生成频率，默认每天凌晨3点</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item v-if="embyData.enable_library_poster === 1">
+            <el-button type="primary" @click="handleGeneratePosters" :loading="posterGenerating">
+              <el-icon><Refresh /></el-icon>
+              手动生成封面
+            </el-button>
+          </el-form-item>
+        </el-card>
+
         <el-card class="settings-card sync-features-card" shadow="hover">
           <template #header>
             <div class="card-header-wrapper">
@@ -671,6 +722,8 @@ const embyData = reactive({
   selected_libraries: '[]',
   enable_playback_overview: 0,
   enable_playback_progress: 0,
+  enable_library_poster: 0,
+  library_poster_cron: '0 3 * * *',
 })
 
 // 媒体库选择相关数据
@@ -744,6 +797,8 @@ const loadEmbyConfig = async () => {
         embyData.selected_libraries = config.selected_libraries || '[]'
         embyData.enable_playback_overview = config.enable_playback_overview ?? 0
         embyData.enable_playback_progress = config.enable_playback_progress ?? 0
+        embyData.enable_library_poster = config.enable_library_poster ?? 0
+        embyData.library_poster_cron = config.library_poster_cron || '0 3 * * *'
         
         // 解析选中的媒体库ID列表
         try {
@@ -767,6 +822,30 @@ const loadEmbyConfig = async () => {
     ElMessage.error('加载Emby配置失败')
   } finally {
     embyLoading.value = false
+  }
+}
+
+// 封面生成相关
+const posterGenerating = ref(false)
+
+const onPosterEnabledChange = () => {
+  // 启用/禁用变化时自动保存
+}
+
+const handleGeneratePosters = async () => {
+  try {
+    posterGenerating.value = true
+    const response = await http?.post(`${SERVER_URL}/emby/generate-library-posters`)
+    if (response?.data.code === 200) {
+      ElMessage.success('封面生成任务已启动，请稍后查看效果')
+    } else {
+      ElMessage.warning(response?.data.message || '启动封面生成任务失败')
+    }
+  } catch (error) {
+    console.error('触发封面生成错误:', error)
+    ElMessage.error('触发封面生成失败')
+  } finally {
+    posterGenerating.value = false
   }
 }
 
