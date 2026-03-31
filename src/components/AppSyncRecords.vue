@@ -80,6 +80,22 @@
               <el-descriptions-item label="失败原因" v-if="scope.row.error" :span="2">
                 {{ scope.row.error ? scope.row.error : '-' }}
               </el-descriptions-item>
+              <el-descriptions-item label="操作" :span="2">
+                <el-button type="primary" size="small" @click="viewTaskDetail(scope.row.id)" link>
+                  查看详情
+                </el-button>
+                <el-button
+                  v-if="isDeletableRecord(scope.row) && !batchMode"
+                  type="danger"
+                  size="small"
+                  style="margin-left: 8px"
+                  :loading="deleteLoading"
+                  @click="deleteRecord(scope.row.id)"
+                  link
+                >
+                  删除
+                </el-button>
+              </el-descriptions-item>
             </el-descriptions>
           </template>
         </el-table-column>
@@ -89,7 +105,7 @@
             {{ scope.row.remote_path || '-' }} => {{ scope.row.local_path || '-' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" align="center" fixed="right">
+        <el-table-column label="操作" width="120" align="center" class-name="mobile-hide-action-col">
           <template #default="scope">
             <el-button type="primary" size="small" @click="viewTaskDetail(scope.row.id)" link>
               查看
@@ -126,6 +142,24 @@
           align="center"
           :selectable="isDeletableRecord"
         />
+        <el-table-column type="expand" class-name="desktop-expand-col">
+          <template #default="scope">
+            <div style="padding: 10px 20px; display: flex; gap: 12px;">
+              <el-button type="primary" size="small" @click="viewTaskDetail(scope.row.id)">
+                查看详情
+              </el-button>
+              <el-button
+                v-if="isDeletableRecord(scope.row) && !batchMode"
+                type="danger"
+                size="small"
+                :loading="deleteLoading"
+                @click="deleteRecord(scope.row.id)"
+              >
+                删除
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="id" label="任务ID" width="80" />
         <el-table-column prop="status" label="状态" width="90">
           <template #default="scope">
@@ -746,6 +780,11 @@ watch(batchMode, (val) => {
   .desktop-pagination {
     display: none;
   }
+
+  /* 移动端隐藏操作列（展开行中已有操作按钮） */
+  .mobile-table :deep(.mobile-hide-action-col) {
+    display: none !important;
+  }
 }
 
 @media (min-width: 769px) {
@@ -758,6 +797,18 @@ watch(batchMode, (val) => {
   .desktop-pagination {
     display: table;
   }
+}
+
+/* 窄屏桌面模式下隐藏操作列固定定位（Via浏览器桌面模式等场景） */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .desktop-table :deep(.el-table__fixed-right) {
+    display: none !important;
+  }
+}
+
+/* 正常桌面端隐藏展开列箭头 */
+.desktop-table :deep(.desktop-expand-col .el-table__expand-icon) {
+  display: none;
 }
 
 /* 小屏移动设备 */
