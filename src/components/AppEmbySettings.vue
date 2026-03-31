@@ -894,6 +894,8 @@ const saveEmbyConfig = async () => {
         selected_libraries: JSON.stringify(selectedLibraryIds.value),
         enable_playback_overview: embyData.enable_playback_overview,
         enable_playback_progress: embyData.enable_playback_progress,
+        enable_library_poster: embyData.enable_library_poster,
+        library_poster_cron: embyData.library_poster_cron,
       },
       {
         headers: {
