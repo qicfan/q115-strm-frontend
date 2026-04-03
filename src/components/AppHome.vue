@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Document } from '@element-plus/icons-vue'
+import { ref, onMounted } from 'vue'
+import { Document, Close } from '@element-plus/icons-vue'
 import VersionManager from './VersionManager.vue'
 import QueueStatsCard from './QueueStatsCard.vue'
 import HourlyStatsChart from './HourlyStatsChart.vue'
@@ -9,16 +9,33 @@ import AppLogViewer from './AppLogViewer.vue'
 
 const showLogDialog = ref(false)
 const logViewerRef = ref<InstanceType<typeof AppLogViewer> | null>(null)
+const showWelcomeBanner = ref(true)
+
+onMounted(() => {
+  const isDismissed = localStorage.getItem('welcome_banner_dismissed')
+  if (isDismissed === 'true') {
+    showWelcomeBanner.value = false
+  }
+})
 
 const handleLogDialogClose = () => {
   if (logViewerRef.value) {
     logViewerRef.value.disconnect()
   }
 }
+
+const dismissWelcomeBanner = () => {
+  localStorage.setItem('welcome_banner_dismissed', 'true')
+  showWelcomeBanner.value = false
+}
 </script>
 
 <template>
   <div class="home-container">
+    <div v-if="showWelcomeBanner" class="welcome-banner">
+      <span class="welcome-text">欢迎使用QMediaSync</span>
+      <el-icon class="welcome-close" @click="dismissWelcomeBanner"><Close /></el-icon>
+    </div>
     <div class="header-section">
       <div class="header-title">
         <h1>控制台</h1>
@@ -115,26 +132,52 @@ const handleLogDialogClose = () => {
   padding: 0;
 }
 
+.welcome-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.welcome-text {
+  font-size: 14px;
+  color: #606266;
+}
+
+.welcome-close {
+  cursor: pointer;
+  color: #909399;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.welcome-close:hover {
+  color: #409eff;
+}
+
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: white;
   border-radius: 16px;
-  color: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
 }
 
 .header-title h1 {
   margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 700;
+  color: #303133;
 }
 
 .header-title p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.9;
+  color: #909399;
 }
 
 .header-actions {
