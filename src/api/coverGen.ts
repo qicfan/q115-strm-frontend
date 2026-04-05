@@ -1,50 +1,12 @@
 import { SERVER_URL } from '@/const'
 import type { AxiosStatic } from 'axios'
 import { ElMessage } from 'element-plus'
+import type { CoverGenConfig, CoverGenResponse, CoverGenStatus, EmbyLibrary } from '@/typing'
 
 let http: AxiosStatic | undefined
 
 export const setHttpInstance = (httpInstance: AxiosStatic | undefined) => {
   http = httpInstance
-}
-
-export interface CoverGenConfig {
-  zh_font_size: number
-  en_font_size: number
-  title_spacing: number
-  blur_size: number
-  color_ratio: number
-  resolution: string
-  use_primary: boolean
-  multi_blur: boolean
-  title_config: string
-  sort_by: 'random' | 'date_created' | 'premiere_date'
-}
-
-export interface CoverGenResult {
-  library_id: string
-  library_name: string
-  success: boolean
-  message: string
-  duration_ms: number
-}
-
-export interface CoverGenResponse {
-  total: number
-  success: number
-  failed: number
-  results: CoverGenResult[]
-}
-
-export interface CoverGenStatus {
-  is_running: boolean
-  last_run_time: string
-  last_run_results: CoverGenResult[]
-}
-
-export interface EmbyLibrary {
-  library_id: string
-  name: string
 }
 
 export const coverGenApi = {
