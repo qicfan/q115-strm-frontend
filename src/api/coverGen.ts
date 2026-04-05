@@ -1,13 +1,21 @@
 import { SERVER_URL } from '@/const'
 import type { AxiosStatic } from 'axios'
 import { ElMessage } from 'element-plus'
-import type { CoverGenConfig, CoverGenResponse, CoverGenStatus, EmbyLibrary } from '@/typing'
+import type {
+  CoverGenConfig,
+  CoverGenResponse,
+  CoverGenResult,
+  CoverGenStatus,
+  EmbyLibrary,
+} from '@/typing'
 
 let http: AxiosStatic | undefined
 
 export const setHttpInstance = (httpInstance: AxiosStatic | undefined) => {
   http = httpInstance
 }
+
+export type { CoverGenConfig, CoverGenResult, CoverGenResponse, CoverGenStatus, EmbyLibrary }
 
 export const coverGenApi = {
   getConfig: async (): Promise<CoverGenConfig> => {

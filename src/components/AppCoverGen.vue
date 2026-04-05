@@ -259,7 +259,6 @@
 </template>
 
 <script setup lang="ts">
-import { SERVER_URL } from '@/const'
 import type { AxiosStatic } from 'axios'
 import {
   Picture,
@@ -279,6 +278,7 @@ import { ElMessage } from 'element-plus'
 import { inject, onMounted, ref, reactive } from 'vue'
 import {
   coverGenApi,
+  setHttpInstance,
   type CoverGenConfig,
   type CoverGenResult,
   type EmbyLibrary,
@@ -406,7 +406,7 @@ const handleResetConfig = async () => {
 }
 
 onMounted(() => {
-  coverGenApi.setHttpInstance(http)
+  setHttpInstance(http)
   loadLibraries()
   loadConfig()
 })
