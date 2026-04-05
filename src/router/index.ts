@@ -21,6 +21,7 @@ import AppNotificationChannels from '@/components/AppNotificationChannels.vue'
 import AppApiKeys from '@/components/AppApiKeys.vue'
 import AppFileManager from '@/components/AppFileManager.vue'
 import AppUpdate from '@/components/AppUpdate.vue'
+import AppCoverGen from '@/components/AppCoverGen.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -437,6 +438,17 @@ const routes = [
       requiresAuth: true,
       parent: 'settings',
       icon: 'DataLine',
+      showInMenu: true,
+    },
+  },
+  {
+    path: '/cover-gen',
+    name: 'cover-gen',
+    component: AppCoverGen,
+    meta: {
+      title: '封面生成',
+      requiresAuth: true,
+      icon: 'Picture',
       showInMenu: true,
     },
   },
